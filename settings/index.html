@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Homematic IP Connect API Settings</title>
+  <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+      padding: 20px 0;
+    }
+    
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .header p {
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+    }
+    
+    .tour-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+    }
+    
+    .tour-card h2 {
+      font-size: 2em;
+      margin-bottom: 15px;
+    }
+    
+    .tour-card p {
+      font-size: 1.1em;
+      margin-bottom: 25px;
+      opacity: 0.95;
+    }
+    
+    .btn-tour {
+      background: white;
+      color: #667eea;
+      padding: 18px 50px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.3em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    .btn-tour:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    
+    .btn-tour:active {
+      transform: scale(0.98);
+    }
+    
+    /* Tour Overlay */
+    .tour-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .tour-overlay.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .tour-content {
+      background: white;
+      border-radius: 20px;
+      max-width: 700px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 40px;
+      position: relative;
+      animation: slideUp 0.4s ease;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .tour-content h2 {
+      color: #667eea;
+      font-size: 2em;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .tour-icon {
+      font-size: 1.5em;
+    }
+    
+    .tour-step {
+      margin: 25px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .tour-step h3 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 1.3em;
+    }
+    
+    .tour-step p {
+      color: #666;
+      line-height: 1.6;
+      font-size: 1em;
+    }
+    
+    .tour-step .feature-highlight {
+      background: #667eea;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    
+    .tour-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      gap: 10px;
+    }
+    
+    .btn-tour-nav {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    
+    .btn-prev {
+      background: #e0e0e0;
+      color: #333;
+    }
+    
+    .btn-next {
+      background: #667eea;
+      color: white;
+    }
+    
+    .btn-close {
+      background: #4caf50;
+      color: white;
+    }
+    
+    .btn-tour-nav:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .btn-tour-nav:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .tour-progress {
+      text-align: center;
+      color: #666;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    
+    .progress-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    
+    .progress-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ddd;
+      transition: all 0.3s ease;
+    }
+    
+    .progress-dot.active {
+      background: #667eea;
+      transform: scale(1.3);
+    }
+    
+    /* Config Section */
+    .section-title {
+      font-size: 1.5em;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .field {
+      margin: 20px 0;
+    }
+    
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      transition: border-color 0.3s ease;
+    }
+    
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    textarea {
+      font-family: 'Monaco', 'Courier New', monospace;
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .hint {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    button {
+      background: #4caf50;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-secondary {
+      background: #2196f3;
+    }
+    
+    .btn-warning {
+      background: #ff9800;
+    }
+    
+    #status {
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    
+    .status-ok {
+      background: #c8e6c9;
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+    
+    .status-error {
+      background: #ffcdd2;
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+    
+    .status-info {
+      background: #e3f2fd;
+      color: #1565c0;
+      border-left: 4px solid #2196f3;
+    }
+    
+    .collapsible-header {
+      background: #f5f5f5;
+      padding: 15px;
+      cursor: pointer;
+      border-radius: 8px;
+      user-select: none;
+      transition: background 0.3s ease;
+      font-weight: 600;
+      margin: 10px 0;
+    }
+    
+    .collapsible-header:hover {
+      background: #e0e0e0;
+    }
+    
+    .collapsible-content {
+      display: none;
+      padding: 20px;
+      background: #fafafa;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .collapsible-content.open {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        max-height: 0;
+      }
+      to {
+        opacity: 1;
+        max-height: 1000px;
+      }
+    }
+    
+    .wizard {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    
+    .wizard-step {
+      margin: 15px 0;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      border-left: 4px solid #2196f3;
+    }
+    
+    .step-number {
+      display: inline-block;
+      width: 35px;
+      height: 35px;
+      background: #2196f3;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 35px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
+    pre {
+      background: #2d2d2d;
+      color: #f8f8f8;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+    
+    code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Courier New', monospace;
+    }
+    
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    
+    .success-box {
+      background: #c8e6c9;
+      border-left: 4px solid #4caf50;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header" style="margin-bottom: 15px; padding: 15px 0;">
+      <h1 style="margin-bottom: 5px;">🏠 Homematic IP</h1>
+      <p style="margin-bottom: 10px;">Verbinde deine Smart Home Geräte mit Homey</p>
+      
+      <!-- Action Buttons -->
+      <div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button onclick="scrollToSettings()" 
+                style="background: white; color: #667eea; padding: 12px 30px; border: none; border-radius: 50px; font-size: 1.1em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease;"
+                onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)'"
+                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'">
+          ⚙️ Einstellungen
+        </button>
+        <button onclick="window.open('https://o1.simplebase.co/', '_blank')" 
+                style="background: white; color: #667eea; padding: 12px 30px; border: none; border-radius: 50px; font-size: 1.1em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease;"
+                onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)'"
+                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'">
+          💬 Hilfe
+        </button>
+      </div>
+      
+      <!-- Links -->
+      <div style="margin-top: 15px; font-size: 1em; opacity: 0.95;">
+        <a href="https://o1.digital" target="_blank" style="color: white; text-decoration: none; font-weight: 500; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">o1.digital</a>
+        <span style="margin: 0 10px; opacity: 0.7;">|</span>
+        <a href="https://www.marioco.de" target="_blank" style="color: white; text-decoration: none; font-weight: 500; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">marioco.de</a>
+      </div>
+    </div>
+
+    <!-- Feature Tour Card -->
+    <div class="card tour-card" style="margin-top: 15px;">
+      <h2>✨ Willkommen!</h2>
+      <p>Neu hier? Entdecke die Möglichkeiten deiner Homematic IP Integration</p>
+      <button class="btn-tour" onclick="startTour()">🚀 Tour starten</button>
+    </div>
+
+    <!-- Status -->
+    <p id="status" class="status-info">Lade Konfiguration...</p>
+
+    <!-- HCU Configuration Card -->
+    <div class="card">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <strong>📚 Erste Schritte: HCU Developer Mode aktivieren ▼</strong>
+      </div>
+      <div class="collapsible-content">
+  <div class="info-box">
+          <strong>🎯 Was Sie benötigen:</strong><br>
+          • Home Control Unit (HCU) im lokalen Netzwerk<br>
+          • SGTIN Ihrer HCU (24-stellige Seriennummer)<br>
+          • Zugriff auf das HCU Web-Interface<br>
+          • Ca. 5-10 Minuten Zeit
+  </div>
+
+        <div class="success-box" style="margin-top: 15px;">
+          <strong>🔑 SGTIN finden:</strong><br>
+          Die SGTIN finden Sie:<br>
+          • Auf der <strong>Rückseite der HCU</strong> (Aufkleber) - 24 Zeichen<br>
+          • In der <strong>Homematic IP App</strong>: Einstellungen → Access Point → Details<br>
+          • Beispiel volle SGTIN: <code>1234A123B12312C3123412D3</code><br>
+          • <strong>Für die Suche: Nur die letzten 4 Zeichen</strong> → <code>12D3</code>
+        </div>
+
+        <h3>Schritt 1: HCU Web-Interface öffnen</h3>
+        <p>Öffnen Sie in Ihrem Browser das HCU-Interface:</p>
+        <code>https://hcu1-XXXX.local:6969</code>
+        <p style="margin-top: 10px;"><small>Wobei XXXX die <strong>letzten 4 Zeichen</strong> Ihrer SGTIN sind</small></p>
+        <p style="margin-top: 10px;"><small>Beispiel: Bei SGTIN <code>1234A123B12312C3123412D3</code> → <code>https://hcu1-12D3.local:6969</code></small></p>
+        <p style="margin-top: 10px;"><small>Oder verwenden Sie die IP-Adresse: <code>https://192.168.X.X:6969</code></small></p>
+        
+        <div class="warning-box" style="margin-top: 15px;">
+          <strong>⚠️ Zertifikatswarnung:</strong> Ihr Browser wird eine Sicherheitswarnung anzeigen (selbstsigniertes Zertifikat). 
+          Klicken Sie auf "Erweitert" und dann "Trotzdem fortfahren" oder "Ausnahme hinzufügen".
+        </div>
+
+        <h3>Schritt 2: Developer Mode aktivieren</h3>
+        <ol style="margin-left: 20px; line-height: 1.8;">
+          <li>Melden Sie sich im HCU Web-Interface an</li>
+          <li>Navigieren Sie zu <strong>Einstellungen</strong> (⚙️ Symbol)</li>
+          <li>Wählen Sie <strong>"Entwickler & Tests"</strong> oder <strong>"Developer Mode"</strong></li>
+          <li>Aktivieren Sie den <strong>Developer Mode</strong> (Schalter auf ON)</li>
+          <li>Bestätigen Sie die Warnung</li>
+        </ol>
+
+        <div class="success-box" style="margin-top: 15px;">
+          <strong>✅ Geschafft!</strong> Der Developer Mode ist jetzt aktiviert. Die HCU erlaubt nun Connect API Verbindungen.
+        </div>
+
+        <h3>Schritt 3: Activation Key generieren</h3>
+        <ol style="margin-left: 20px; line-height: 1.8;">
+          <li>Im Developer Mode Bereich, klicken Sie auf <strong>"Activation Key generieren"</strong></li>
+          <li>Sie erhalten einen 6-stelligen Code (z.B. <code>A1B2C3</code>)</li>
+          <li>Dieser Code ist <strong>30 Minuten gültig</strong></li>
+          <li>Verwenden Sie ihn unten im Token-Generator</li>
+        </ol>
+
+        <div class="info-box" style="margin-top: 15px;">
+          <strong>💡 Tipp:</strong> Lassen Sie das HCU Web-Interface geöffnet, während Sie unten die Konfiguration durchführen.
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Configuration Card -->
+    <div class="card">
+      <h2 class="section-title">⚙️ Konfiguration</h2>
+
+      <div class="field">
+        <label for="hcuHost">🌐 HCU Host:</label>
+        <input type="text" id="hcuHost" placeholder="hcu1-12D3.local oder 192.168.1.100" style="width: 100%; margin-bottom: 8px;">
+        <div class="hint">
+          Hostname (mit letzten 4 Zeichen der SGTIN) oder IP-Adresse Ihrer Home Control Unit (ohne http:// oder Port)
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="sgtin">🔑 SGTIN (optional - für automatische Suche):</label>
+        <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+          <input type="text" id="sgtin" placeholder="Letzte 4 Zeichen der SGTIN (z.B. 12D3)" style="flex: 1; text-transform: uppercase;" maxlength="4">
+          <button onclick="searchBySGTIN()" class="btn-secondary" style="white-space: nowrap; margin: 0;">🔍 Mit SGTIN suchen</button>
+        </div>
+        <div class="hint">
+          Die letzten 4 Zeichen der SGTIN finden Sie auf der Rückseite Ihrer HCU (z.B. bei 1234A123B12312C3123412D3 → 12D3)
+        </div>
+        <div id="sgtinSearchStatus" style="margin-top: 10px;"></div>
+      </div>
+
+      <div class="field">
+        <label for="authToken">🔑 Auth Token:</label>
+      <textarea id="authToken" rows="3" placeholder="9889E835DC50A1D32A200CA17CC26906C278E72952EE9151D1BDEF30E0E5E5ED"></textarea>
+      <div class="hint">
+        Der Authorization Token von der Connect API (64 Zeichen Hex-String)
+      </div>
+    </div>
+
+    <div class="field">
+        <label for="pluginId">🔌 Plugin ID:</label>
+      <input type="text" id="pluginId" placeholder="de.maricode.homeymatic.capi">
+      <div class="hint">
+        Eindeutige Plugin-ID (Standard: de.maricode.homeymatic.capi)
+      </div>
+    </div>
+
+      <button onclick="save()">💾 Speichern</button>
+    <button onclick="testConnection()" class="btn-secondary">🔍 Verbindung testen</button>
+      <button onclick="toggleWizard()" class="btn-warning">🔑 Token Generator</button>
+  </div>
+
+    <!-- Token Generator Wizard -->
+    <div class="wizard" id="tokenWizard" style="display: none;">
+      <h2 class="section-title">🔑 Token Generator</h2>
+      <p>Generiere automatisch einen Auth Token für die Connect API:</p>
+      
+    <div class="warning-box">
+      <strong>⚠️ Hinweis:</strong> Die automatische Token-Generierung funktioniert möglicherweise nicht in allen Homey-Umgebungen.
+      Bei Problemen nutzen Sie bitte die manuelle Methode (siehe unten).
+    </div>
+
+      <div class="wizard-step">
+        <span class="step-number">1</span>
+        <strong>HCU Host eingeben</strong>
+        <div class="field" style="margin-top: 10px;">
+          <input type="text" id="wizardHost" placeholder="hcu1-12D3.local oder 192.168.1.100">
+          <div class="hint">IP-Adresse oder Hostname Ihrer Home Control Unit (wird automatisch ausgefüllt wenn Sie oben die SGTIN-Suche nutzen)</div>
+        </div>
+      </div>
+
+    <div class="wizard-step">
+      <span class="step-number">2</span>
+      <strong>Activation Key aus HCU Web Interface holen</strong>
+      <div class="hint" style="margin-top: 10px;">
+        Öffnen Sie das <strong>HCU Web Interface</strong> (z.B. https://hcu1-1234.local:6969) →
+        <strong>Einstellungen → Entwicklermodus</strong> → 
+        <strong>Activation Key generieren</strong>
+      </div>
+      <div class="field" style="margin-top: 10px;">
+        <input type="text" id="activationKey" placeholder="ABCDEF" style="text-transform: uppercase;">
+        <div class="hint">6-stelliger Activation Key (z.B. ABCDEF)</div>
+      </div>
+    </div>
+
+    <div class="wizard-step">
+      <span class="step-number">3</span>
+      <strong>Plugin-ID (optional)</strong>
+      <div class="field" style="margin-top: 10px;">
+        <input type="text" id="wizardPluginId" value="de.maricode.homeymatic.capi">
+        <div class="hint">Eindeutige Plugin-ID in Reverse-Domain-Notation</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <button onclick="generateToken()" id="btnGenerate">🚀 Token generieren</button>
+      <button onclick="toggleWizard()" class="btn-secondary">Schließen</button>
+    </div>
+
+    <div id="wizardStatus" style="margin-top: 15px;"></div>
+  </div>
+
+    <!-- Manual Token Guide -->
+    <div class="card">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <strong>📖 Manuelle Token-Generierung (empfohlen) ▼</strong>
+    </div>
+    <div class="collapsible-content">
+        <h3>Token manuell generieren mit Postman, curl oder ähnlichen Tools:</h3>
+      
+        <div class="info-box">
+        <strong>📋 Schritt-für-Schritt Anleitung:</strong>
+      </div>
+
+      <h4>1. Activation Key generieren</h4>
+      <p>Öffnen Sie das <strong>HCU Web Interface</strong> (z.B. https://hcu1-1234.local:6969) → 
+         <strong>Einstellungen → Entwicklermodus</strong> → <strong>Activation Key generieren</strong></p>
+      <p>Sie erhalten einen 6-stelligen Code wie <code>ABCDEF</code></p>
+
+      <h4>2. Token anfordern</h4>
+        <pre>POST https://hcu1-XXXX.local:6969/hmip/auth/requestConnectApiAuthToken
+
+Header:
+  Content-Type: application/json
+  VERSION: 12
+
+Body:
+{
+  "activationKey": "ABCDEF",
+  "pluginId": "de.maricode.homeymatic.capi",
+  "friendlyName": {
+    "de": "Homey Integration",
+    "en": "Homey Integration"
+  }
+}</pre>
+      
+      <p><strong>Response:</strong> Sie erhalten einen <code>authToken</code> zurück</p>
+
+      <h4>3. Token bestätigen</h4>
+        <pre>POST https://hcu1-XXXX.local:6969/hmip/auth/confirmConnectApiAuthToken
+
+Header:
+  Content-Type: application/json
+  VERSION: 12
+
+Body:
+{
+  "activationKey": "ABCDEF",
+  "authToken": "9889E835DC50A1D32A200CA17CC26906..."
+}</pre>
+
+      <p><strong>Response:</strong> Token ist jetzt aktiviert und kann verwendet werden!</p>
+
+      <h4>4. Token in Homey eintragen</h4>
+      <p>Kopieren Sie den <code>authToken</code> (64 Zeichen) und tragen Sie ihn oben im Feld "Auth Token" ein.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tour Overlay -->
+  <div class="tour-overlay" id="tourOverlay">
+    <div class="tour-content">
+      <div class="tour-progress">
+        <span id="tourStepIndicator">Schritt 1 von 5</span>
+        <div class="progress-dots">
+          <div class="progress-dot active" data-step="0"></div>
+          <div class="progress-dot" data-step="1"></div>
+          <div class="progress-dot" data-step="2"></div>
+          <div class="progress-dot" data-step="3"></div>
+          <div class="progress-dot" data-step="4"></div>
+        </div>
+      </div>
+      
+      <div id="tourStep"></div>
+      
+      <div class="tour-navigation">
+        <button class="btn-tour-nav btn-prev" id="btnPrev" onclick="prevTourStep()">← Zurück</button>
+        <button class="btn-tour-nav btn-next" id="btnNext" onclick="nextTourStep()">Weiter →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let wizardVisible = false;
+    let currentTourStep = 0;
+    
+    const tourSteps = [
+      {
+        icon: "🏠",
+        title: "Willkommen bei Homematic IP",
+        content: `
+          <p>Mit dieser App kannst du deine <span class="feature-highlight">Homematic IP Geräte</span> direkt in Homey steuern!</p>
+          <div class="tour-step">
+            <h3>✨ Was kannst du machen?</h3>
+            <p>• Schalter, Dimmer und Thermostate steuern<br>
+               • Sensoren auslesen (Temperatur, Luftfeuchtigkeit)<br>
+               • Rollläden und Jalousien automatisieren<br>
+               • Tür-/Fensterkontakte überwachen<br>
+               • Wandtaster für Flows nutzen</p>
+          </div>
+        `
+      },
+      {
+        icon: "🔌",
+        title: "Schneller Einstieg",
+        content: `
+          <div class="tour-step">
+            <h3>1️⃣ Developer Mode aktivieren</h3>
+            <p>Aktiviere den <span class="feature-highlight">Developer Mode</span> in deiner HCU. Eine detaillierte Anleitung findest du unten auf dieser Seite unter "Erste Schritte".</p>
+          </div>
+          <div class="tour-step">
+            <h3>2️⃣ HCU verbinden</h3>
+            <p>Gib deine <span class="feature-highlight">SGTIN</span> ein und klicke auf <span class="feature-highlight">"Mit SGTIN suchen"</span> - die App findet deine HCU automatisch! Oder gib die IP-Adresse manuell ein.</p>
+          </div>
+          <div class="tour-step">
+            <h3>3️⃣ Auth Token generieren</h3>
+            <p>Nutze den integrierten <span class="feature-highlight">Token-Generator</span> für die automatische Generierung oder folge der manuellen Anleitung.</p>
+          </div>
+          <div class="tour-step">
+            <h3>4️⃣ Geräte hinzufügen</h3>
+            <p>Gehe zu "Geräte hinzufügen" in Homey und wähle deine Homematic IP Geräte aus!</p>
+          </div>
+        `
+      },
+      {
+        icon: "🎯",
+        title: "Deine Geräte steuern",
+        content: `
+          <div class="tour-step">
+            <h3>💡 Licht & Schalter</h3>
+            <p>Schalte Lampen und Steckdosen per Knopfdruck oder zeitgesteuert ein und aus. Dimmer unterstützen stufenlose Helligkeitsregelung.</p>
+          </div>
+          <div class="tour-step">
+            <h3>🌡️ Heizung</h3>
+            <p>Stelle die Zieltemperatur deiner Thermostate ein und überwache die aktuelle Raumtemperatur - perfekt für Heizungsautomatisierung!</p>
+          </div>
+          <div class="tour-step">
+            <h3>🪟 Rollläden</h3>
+            <p>Öffne, schließe oder positioniere deine Rollläden und Jalousien präzise - ideal für Sonnenschutz und Privatsphäre.</p>
+          </div>
+        `
+      },
+      {
+        icon: "🔔",
+        title: "Automatisierungen erstellen",
+        content: `
+          <div class="tour-step">
+            <h3>⚡ Flow-Trigger</h3>
+            <p>Nutze <span class="feature-highlight">Events deiner Geräte</span> um Flows zu starten:</p>
+            <p>• Taste gedrückt (Wandtaster)<br>
+               • Tür/Fenster geöffnet<br>
+               • Temperatur über/unter Schwellwert<br>
+               • Bewegung erkannt</p>
+          </div>
+          <div class="tour-step">
+            <h3>🎬 Flow-Aktionen</h3>
+            <p>Steuere deine Geräte in Flows:</p>
+            <p>• Licht einschalten bei Bewegung<br>
+               • Heizung reduzieren wenn Fenster offen<br>
+               • Rollläden schließen bei Sonnenuntergang</p>
+          </div>
+        `
+      },
+      {
+        icon: "🚀",
+        title: "Los geht's!",
+        content: `
+          <div class="tour-step">
+            <h3>✅ Nächste Schritte</h3>
+            <p><strong>1.</strong> Lies die <span class="feature-highlight">"Erste Schritte"</span> Anleitung (direkt unter dieser Tour)<br>
+               <strong>2.</strong> Aktiviere den Developer Mode in deiner HCU<br>
+               <strong>3.</strong> Gib deine <span class="feature-highlight">SGTIN</span> ein und suche deine HCU<br>
+               <strong>4.</strong> Generiere einen Auth Token<br>
+               <strong>5.</strong> Speichere die Konfiguration<br>
+               <strong>6.</strong> Füge deine Geräte in Homey hinzu!</p>
+          </div>
+          <div class="info-box">
+            <strong>💡 Hilfe benötigt?</strong><br>
+            • Ausführliche Anleitungen auf dieser Seite<br>
+            • <a href="https://github.com/marioco-de/HOMEYmatic-cAPI" target="_blank" style="color: #2196f3;">GitHub-Dokumentation</a> mit Screenshots<br>
+            • <a href="https://github.com/marioco-de/HOMEYmatic-cAPI/issues" target="_blank" style="color: #2196f3;">GitHub Issues</a> für Support & Fragen
+          </div>
+          <div class="success-box">
+            <strong>🎉 Viel Spaß mit deinem Smart Home!</strong><br>
+            <small>Die App funktioniert auch ohne Konfiguration - du kannst sie jederzeit später einrichten.</small>
+          </div>
+        `
+      }
+    ];
+
+    function onHomeyReady(homey) {
+      homey.ready();
+      load(homey);
+      window.homey = homey;
+    }
+
+    async function load(homey) {
+      try {
+        const host = await homey.get('hcuHost') || '';
+        const token = await homey.get('authToken') || '';
+        const pluginId = await homey.get('pluginId') || 'de.maricode.homeymatic.capi';
+        
+        document.getElementById('hcuHost').value = host;
+        document.getElementById('authToken').value = token;
+        document.getElementById('pluginId').value = pluginId;
+        
+        document.getElementById('wizardHost').value = host;
+        document.getElementById('wizardPluginId').value = pluginId;
+        
+        const status = document.getElementById('status');
+        if (host && token) {
+          status.textContent = '✅ Konfiguration geladen - Verbindung aktiv';
+          status.className = 'status-ok';
+        } else {
+          status.textContent = '⚠️ Bitte HCU Host und Auth Token eintragen';
+          status.className = 'status-info';
+        }
+      } catch (e) {
+        const status = document.getElementById('status');
+        status.textContent = '❌ Fehler beim Laden: ' + e.message;
+        status.className = 'status-error';
+      }
+    }
+
+    function startTour() {
+      currentTourStep = 0;
+      document.getElementById('tourOverlay').classList.add('active');
+      showTourStep(0);
+    }
+
+    function scrollToSettings() {
+      const settingsSection = document.querySelector('.card');
+      if (settingsSection) {
+        settingsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function showTourStep(step) {
+      const tourData = tourSteps[step];
+      const tourStepDiv = document.getElementById('tourStep');
+      
+      tourStepDiv.innerHTML = `
+        <h2><span class="tour-icon">${tourData.icon}</span>${tourData.title}</h2>
+        ${tourData.content}
+      `;
+      
+      document.getElementById('tourStepIndicator').textContent = `Schritt ${step + 1} von ${tourSteps.length}`;
+      
+      // Update progress dots
+      document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === step);
+      });
+      
+      // Update buttons
+      document.getElementById('btnPrev').disabled = step === 0;
+      
+      const btnNext = document.getElementById('btnNext');
+      if (step === tourSteps.length - 1) {
+        btnNext.textContent = '✓ Tour beenden';
+        btnNext.className = 'btn-tour-nav btn-close';
+      } else {
+        btnNext.textContent = 'Weiter →';
+        btnNext.className = 'btn-tour-nav btn-next';
+      }
+    }
+
+    function nextTourStep() {
+      if (currentTourStep < tourSteps.length - 1) {
+        currentTourStep++;
+        showTourStep(currentTourStep);
+      } else {
+        closeTour();
+      }
+    }
+
+    function prevTourStep() {
+      if (currentTourStep > 0) {
+        currentTourStep--;
+        showTourStep(currentTourStep);
+      }
+    }
+
+    function closeTour() {
+      document.getElementById('tourOverlay').classList.remove('active');
+    }
+
+    function toggleWizard() {
+      const wizard = document.getElementById('tokenWizard');
+      wizardVisible = !wizardVisible;
+      wizard.style.display = wizardVisible ? 'block' : 'none';
+      
+      if (wizardVisible) {
+        wizard.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function toggleCollapsible(element) {
+      const content = element.nextElementSibling;
+      content.classList.toggle('open');
+      element.innerHTML = content.classList.contains('open') 
+        ? element.innerHTML.replace('▼', '▲')
+        : element.innerHTML.replace('▲', '▼');
+    }
+
+    async function generateToken() {
+      const host = document.getElementById('wizardHost').value.trim();
+      const activationKey = document.getElementById('activationKey').value.trim().toUpperCase();
+      const pluginId = document.getElementById('wizardPluginId').value.trim() || 'de.maricode.homeymatic.capi';
+      
+      if (!host) {
+        alert('❌ Bitte HCU Host angeben!');
+        return;
+      }
+      
+      if (!activationKey || activationKey.length !== 6) {
+        alert('❌ Bitte gültigen 6-stelligen Activation Key angeben!');
+        return;
+      }
+
+      if (!window.homey) {
+        alert('❌ Homey API nicht bereit!');
+        return;
+      }
+
+      const btnGenerate = document.getElementById('btnGenerate');
+      const wizardStatus = document.getElementById('wizardStatus');
+      
+      btnGenerate.disabled = true;
+      wizardStatus.innerHTML = '<div class="status-info">⏳ Generiere Token über Homey Backend...</div>';
+
+      try {
+        const result = await window.homey.api('POST', '/generateToken', {
+          hcuHost: host,
+          activationKey: activationKey,
+          pluginId: pluginId
+        });
+
+        if (!result.success) {
+          throw new Error(result.error || 'Unbekannter Fehler');
+        }
+
+        const authToken = result.authToken;
+        
+        document.getElementById('hcuHost').value = host;
+        document.getElementById('authToken').value = authToken;
+        document.getElementById('pluginId').value = pluginId;
+
+        wizardStatus.innerHTML = `
+          <div class="success-box">
+            ✅ <strong>Token erfolgreich generiert!</strong><br>
+            Client ID: ${result.clientId || 'N/A'}<br>
+            <small>Der Token wurde automatisch in die Konfiguration übernommen.</small>
+          </div>
+        `;
+
+        setTimeout(() => save(), 1000);
+
+      } catch (error) {
+        wizardStatus.innerHTML = `
+          <div class="status-error">
+            ❌ <strong>Fehler beim Generieren:</strong><br>
+            ${error.message}<br><br>
+            <small>Mögliche Ursachen:</small>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li>HCU nicht erreichbar (Host/IP korrekt?)</li>
+              <li>Developer Mode nicht aktiviert</li>
+              <li>Activation Key bereits verwendet oder abgelaufen</li>
+              <li>Port 6969 nicht erreichbar</li>
+            </ul>
+          </div>
+        `;
+      } finally {
+        btnGenerate.disabled = false;
+      }
+    }
+
+    async function testConnection() {
+      const host = document.getElementById('hcuHost').value.trim();
+      const token = document.getElementById('authToken').value.trim();
+
+      if (!host || !token) {
+        alert('❌ Bitte HCU Host und Auth Token angeben!');
+        return;
+      }
+
+      if (!window.homey) {
+        alert('❌ Homey API nicht bereit!');
+        return;
+      }
+
+      const status = document.getElementById('status');
+      status.textContent = '⏳ Teste Verbindung und lade Geräte...';
+      status.className = 'status-info';
+
+      try {
+        const result = await window.homey.api('GET', '/getStatus');
+        
+        if (result.success && result.connected) {
+          status.textContent = `✅ Verbunden! ${result.deviceCount || 0} Geräte gefunden`;
+          status.className = 'status-ok';
+          
+          alert(`✅ Verbindung erfolgreich!\n\n` + 
+                `Geräte: ${result.deviceCount || 0}\n` +
+                `Home: ${result.home?.label || 'N/A'}\n\n` +
+                `Du kannst jetzt Geräte hinzufügen!`);
+        } else {
+          status.textContent = '❌ Nicht verbunden: ' + (result.error || 'Unbekannter Fehler');
+          status.className = 'status-error';
+          
+          alert('❌ Verbindung fehlgeschlagen:\n' + (result.error || 'Unbekannter Fehler'));
+        }
+      } catch (error) {
+        status.textContent = '❌ Verbindungstest fehlgeschlagen: ' + error.message;
+        status.className = 'status-error';
+        
+        alert('❌ Fehler: ' + error.message);
+      }
+    }
+
+    async function save() {
+      if (!window.homey) {
+        alert('❌ Homey API nicht bereit!');
+        return;
+      }
+
+      const host = document.getElementById('hcuHost').value.trim();
+      const token = document.getElementById('authToken').value.trim();
+      const pluginId = document.getElementById('pluginId').value.trim() || 'de.maricode.homeymatic.capi';
+
+      if (!host || !token) {
+        alert('❌ Bitte HCU Host und Auth Token angeben!');
+        return;
+      }
+
+      try {
+        const status = document.getElementById('status');
+        status.textContent = '⏳ Speichere Konfiguration und verbinde zur HCU...';
+        status.className = 'status-info';
+        
+        // Rufe saveConfig API auf - dies speichert UND stellt Verbindung her
+        const result = await window.homey.api('POST', '/saveConfig', {
+          hcuHost: host,
+          authToken: token,
+          pluginId: pluginId
+        });
+
+        if (!result.success) {
+          throw new Error(result.error || 'Unbekannter Fehler beim Speichern');
+        }
+        
+        status.textContent = '✅ Gespeichert und verbunden! Die App ist jetzt einsatzbereit.';
+        status.className = 'status-ok';
+
+        document.getElementById('tokenWizard').style.display = 'none';
+        wizardVisible = false;
+        
+        alert('✅ Konfiguration gespeichert und Verbindung hergestellt!\n\nDie App ist jetzt mit Ihrer HCU verbunden.');
+      } catch (e) {
+        const status = document.getElementById('status');
+        status.textContent = '❌ Fehler: ' + e.message;
+        status.className = 'status-error';
+        alert('❌ Fehler: ' + e.message + '\n\nBitte prüfen Sie:\n• HCU erreichbar?\n• Auth Token korrekt?\n• Developer Mode aktiviert?');
+      }
+    }
+
+    // Close tour on overlay click
+    document.getElementById('tourOverlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeTour();
+      }
+    });
+
+    // SGTIN-basierte HCU Suche (nur letzte 4 Zeichen)
+    async function searchBySGTIN() {
+      const sgtinInput = document.getElementById('sgtin').value.trim().toUpperCase();
+      const searchStatus = document.getElementById('sgtinSearchStatus');
+
+      // Validierung
+      if (!sgtinInput) {
+        searchStatus.innerHTML = '<div class="warning-box">⚠️ Bitte geben Sie die letzten 4 Zeichen der SGTIN ein</div>';
+        return;
+      }
+
+      if (sgtinInput.length !== 4) {
+        searchStatus.innerHTML = '<div class="warning-box">⚠️ Bitte geben Sie genau 4 Zeichen ein (die letzten 4 Zeichen Ihrer SGTIN)</div>';
+        return;
+      }
+
+      // Nur Hexadezimale Zeichen erlaubt
+      if (!/^[0-9A-F]{4}$/.test(sgtinInput)) {
+        searchStatus.innerHTML = '<div class="warning-box">⚠️ Erlaubt sind nur Buchstaben (A-F) und Zahlen (0-9)</div>';
+        return;
+      }
+
+      searchStatus.innerHTML = '<div class="status-info">🔍 Suche HCU mit SGTIN-Endung...</div>';
+
+      // Konstruiere Hostname: hcu1-{letzte 4 Zeichen}.local
+      const hostname = `hcu1-${sgtinInput}.local`;
+
+      try {
+        searchStatus.innerHTML = `<div class="status-info">🔍 Prüfe ${hostname}...</div>`;
+        
+        // Versuche HTTPS-Verbindung zum Web-Interface (Port 6969)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        await fetch(`https://${hostname}:6969`, {
+          mode: 'no-cors',
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        // Wenn wir hier ankommen, antwortet der Host
+        document.getElementById('hcuHost').value = hostname;
+        document.getElementById('wizardHost').value = hostname; // Auch Wizard-Feld ausfüllen
+        searchStatus.innerHTML = `
+          <div class="success-box">
+            ✅ <strong>HCU gefunden!</strong><br>
+            Hostname: <code>${hostname}</code><br>
+            <small>Das HCU Host Feld wurde automatisch ausgefüllt.</small>
+          </div>
+        `;
+        
+        // Optional: Zeige Link zum Web-Interface
+        setTimeout(() => {
+          searchStatus.innerHTML += `
+            <div class="info-box" style="margin-top: 10px;">
+              💡 <strong>Tipp:</strong> Sie können das HCU Web-Interface jetzt öffnen:<br>
+              <a href="https://${hostname}:6969" target="_blank" style="color: #2196f3;">https://${hostname}:6969</a>
+            </div>
+          `;
+        }, 500);
+        
+      } catch (error) {
+        searchStatus.innerHTML = `
+          <div class="warning-box">
+            ⚠️ <strong>HCU nicht gefunden</strong><br>
+            <small>Der Hostname <code>${hostname}</code> antwortet nicht.</small><br><br>
+            <strong>Mögliche Ursachen:</strong><br>
+            • Falsche Zeichen? Bitte nur die <strong>letzten 4 Zeichen</strong> Ihrer SGTIN eingeben<br>
+            • HCU nicht im gleichen Netzwerk?<br>
+            • HCU ist ausgeschaltet?<br><br>
+            <strong>Beispiel:</strong> Bei SGTIN <code>1234A123B12312C3123412D3</code> geben Sie <code>12D3</code> ein<br><br>
+            <strong>Alternative:</strong> Geben Sie die IP-Adresse direkt im "HCU Host" Feld ein.
+          </div>
+        `;
+      }
+    }
+  </script>
+
+  <!-- Bug Report Button (Footer) -->
+  <div style="text-align: center; padding: 40px 20px 20px 20px;">
+    <button onclick="window.open('https://github.com/marioco-de/HOMEYmatic-cAPI/issues/new', '_blank')" 
+            style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 15px 40px; border: none; border-radius: 50px; font-size: 1.1em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); transition: all 0.3s ease;"
+            onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 20px rgba(239, 68, 68, 0.4)'"
+            onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(239, 68, 68, 0.3)'">
+      🐞 Bug melden (GitHub)
+    </button>
+  </div>
+
+</body>
+</html>

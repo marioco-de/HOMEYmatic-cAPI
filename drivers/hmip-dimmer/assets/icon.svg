@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dimmer icon -->
+  <rect width="500" height="500" fill="#FFC107" rx="80"/>
+  
+  <!-- Light bulb -->
+  <g transform="translate(250, 220)">
+    <!-- Bulb top -->
+    <ellipse cx="0" cy="0" rx="80" ry="100" fill="#FFFFFF"/>
+    
+    <!-- Bulb base -->
+    <rect x="-40" y="90" width="80" height="40" fill="#FFFFFF" rx="5"/>
+    <rect x="-35" y="125" width="70" height="10" fill="#E0E0E0"/>
+    <rect x="-35" y="140" width="70" height="10" fill="#E0E0E0"/>
+    
+    <!-- Light rays -->
+    <line x1="-120" y1="-60" x2="-90" y2="-40" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+    <line x1="120" y1="-60" x2="90" y2="-40" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+    <line x1="-130" y1="20" x2="-95" y2="20" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+    <line x1="130" y1="20" x2="95" y2="20" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+  </g>
+</svg>
+

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Remote/Button icon -->
+  <rect width="500" height="500" fill="#607D8B" rx="80"/>
+  
+  <!-- Remote control -->
+  <g transform="translate(250, 250)">
+    <!-- Remote body -->
+    <rect x="-80" y="-140" width="160" height="280" fill="#FFFFFF" rx="20"/>
+    
+    <!-- Buttons -->
+    <circle cx="0" cy="-80" r="30" fill="#607D8B"/>
+    <circle cx="0" cy="0" r="30" fill="#607D8B"/>
+    <circle cx="0" cy="80" r="30" fill="#607D8B"/>
+    
+    <!-- Button indicators -->
+    <text x="0" y="-70" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#FFFFFF" text-anchor="middle">1</text>
+    <text x="0" y="10" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#FFFFFF" text-anchor="middle">2</text>
+    <text x="0" y="90" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#FFFFFF" text-anchor="middle">3</text>
+  </g>
+</svg>
+

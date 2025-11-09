@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Door/Window Contact icon -->
+  <rect width="500" height="500" fill="#9C27B0" rx="80"/>
+  
+  <!-- Door frame and contact -->
+  <g transform="translate(250, 250)">
+    <!-- Door frame -->
+    <rect x="-110" y="-130" width="100" height="260" fill="#FFFFFF" rx="10"/>
+    
+    <!-- Door -->
+    <rect x="20" y="-130" width="90" height="260" fill="#E0E0E0" rx="10"/>
+    
+    <!-- Door handle -->
+    <circle cx="40" cy="0" r="12" fill="#9C27B0"/>
+    
+    <!-- Contact sensors -->
+    <rect x="-15" y="-40" width="15" height="80" fill="#9C27B0" rx="3"/>
+    <rect x="10" y="-40" width="15" height="80" fill="#9C27B0" rx="3"/>
+  </g>
+</svg>
+

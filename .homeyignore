@@ -1,0 +1,31 @@
+# Development Tools (local testing only, not needed in production)
+dev-tools/
+
+# Build artifacts (compiled files are in build/)
+src/
+tsconfig.json
+
+# Documentation (keep only essential files)
+docs/
+
+# macOS
+.DS_Store
+._*
+
+# Git
+.git/
+.gitignore
+
+# Node
+node_modules/
+package-lock.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+

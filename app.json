@@ -1,0 +1,488 @@
+{
+  "id": "de.maricode.homeymatic.capi",
+  "version": "0.9.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": ["local", "cloud"],
+  "brandColor": "#192c6e",
+  "name": {
+    "de": "eq-3 Homematic IP",
+    "en": "eq-3 Homematic IP"
+  },
+  "description": {
+    "de": "Verbinde Homematic IP Geräte über die offizielle Connect API (Homematic HCU)",
+    "en": "Connect Homematic IP devices via the official Connect API (Homematic HCU)"
+  },
+  "category": ["appliances"],
+  "permissions": ["homey:manager:api"],
+  "images": {
+    "large": "./assets/images/large.png",
+    "small": "./assets/images/small.png"
+  },
+  "author": {
+    "name": "o1.digital / marioco.de",
+    "email": "sos@marioco.de",
+    "website": "https://www.marioco.de"
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Mario Kempter"
+      }
+    ]
+  },
+  "source": "https://github.com/marioco-de/HOMEYmatic-cAPI",
+  "homeyCommunityTopicId": 0,
+  "support": "https://github.com/marioco-de/HOMEYmatic-cAPI/issues",
+  "api": {
+    "getDevices": {
+      "method": "GET",
+      "path": "/devices"
+    },
+    "testConnection": {
+      "method": "POST",
+      "path": "/testConnection"
+    },
+    "saveConfig": {
+      "method": "POST",
+      "path": "/saveConfig"
+    },
+    "getStatus": {
+      "method": "GET",
+      "path": "/getStatus"
+    },
+    "generateToken": {
+      "method": "POST",
+      "path": "/generateToken"
+    }
+  },
+  "settings": [
+    {
+      "type": "group",
+      "title": {
+        "de": "HCU Konfiguration",
+        "en": "HCU Configuration"
+      },
+      "children": [
+        {
+          "id": "customApiUrl",
+          "type": "text",
+          "title": {
+            "de": "HCU IP-Adresse",
+            "en": "HCU IP Address"
+          },
+          "value": "",
+          "hint": {
+            "de": "IP-Adresse der HCU (z.B. http://192.168.1.100)",
+            "en": "IP address of HCU (e.g. http://192.168.1.100)"
+          }
+        },
+        {
+          "id": "accessPointId",
+          "type": "text",
+          "title": {
+            "de": "Access Point ID (SGTIN)",
+            "en": "Access Point ID (SGTIN)"
+          },
+          "value": "",
+          "hint": {
+            "de": "24-stellige SGTIN aus der HCU",
+            "en": "24-digit SGTIN from HCU"
+          }
+        },
+        {
+          "id": "authToken",
+          "type": "password",
+          "title": {
+            "de": "Auth Token",
+            "en": "Auth Token"
+          },
+          "value": "",
+          "hint": {
+            "de": "Auth Token von HCU generiert",
+            "en": "Auth Token generated from HCU"
+          }
+        }
+      ]
+    }
+  ],
+  "drivers": [
+    {
+      "id": "hmip-switch",
+      "name": {
+        "de": "Homematic IP Schalter",
+        "en": "Homematic IP Switch"
+      },
+      "class": "socket",
+      "capabilities": ["onoff"],
+      "platforms": ["local"],
+      "connectivity": ["cloud"],
+      "images": {
+        "large": "./drivers/hmip-switch/assets/images/large.png",
+        "small": "./drivers/hmip-switch/assets/images/small.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ]
+    },
+    {
+      "id": "hmip-dimmer",
+      "name": {
+        "de": "Homematic IP Dimmer",
+        "en": "Homematic IP Dimmer"
+      },
+      "class": "light",
+      "capabilities": ["onoff", "dim"],
+      "platforms": ["local"],
+      "connectivity": ["cloud"],
+      "images": {
+        "large": "./drivers/hmip-dimmer/assets/images/large.png",
+        "small": "./drivers/hmip-dimmer/assets/images/small.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ]
+    },
+    {
+      "id": "hmip-thermostat",
+      "name": {
+        "de": "Homematic IP Thermostat",
+        "en": "Homematic IP Thermostat"
+      },
+      "class": "thermostat",
+      "capabilities": ["target_temperature", "measure_temperature"],
+      "platforms": ["local"],
+      "connectivity": ["cloud"],
+      "images": {
+        "large": "./drivers/hmip-thermostat/assets/images/large.png",
+        "small": "./drivers/hmip-thermostat/assets/images/small.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ]
+    },
+    {
+      "id": "hmip-sensor",
+      "name": {
+        "de": "Homematic IP Sensor",
+        "en": "Homematic IP Sensor"
+      },
+      "class": "sensor",
+      "capabilities": ["measure_temperature", "measure_humidity"],
+      "platforms": ["local"],
+      "connectivity": ["cloud"],
+      "images": {
+        "large": "./drivers/hmip-sensor/assets/images/large.png",
+        "small": "./drivers/hmip-sensor/assets/images/small.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ]
+    },
+    {
+      "id": "hmip-contact",
+      "name": {
+        "de": "Homematic IP Tür-/Fensterkontakt",
+        "en": "Homematic IP Door/Window Contact"
+      },
+      "class": "sensor",
+      "capabilities": ["alarm_contact", "alarm_battery", "alarm_tamper"],
+      "energy": {
+        "batteries": ["INTERNAL"]
+      },
+      "platforms": ["local"],
+      "connectivity": ["cloud"],
+      "images": {
+        "large": "./drivers/hmip-contact/assets/images/large.png",
+        "small": "./drivers/hmip-contact/assets/images/small.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ]
+    },
+    {
+      "id": "hmip-windowcoverings",
+      "name": {
+        "de": "Homematic IP Rollladen/Jalousie",
+        "en": "Homematic IP Blinds/Shutters"
+      },
+      "class": "blinds",
+      "capabilities": ["windowcoverings_set", "windowcoverings_tilt_set"],
+      "platforms": ["local"],
+      "connectivity": ["cloud"],
+      "images": {
+        "large": "./drivers/hmip-windowcoverings/assets/images/large.png",
+        "small": "./drivers/hmip-windowcoverings/assets/images/small.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ]
+    },
+    {
+      "id": "hmip-remote",
+      "name": {
+        "de": "Homematic IP Wandtaster/Fernbedienung",
+        "en": "Homematic IP Wall Switch/Remote"
+      },
+      "class": "button",
+      "capabilities": [],
+      "platforms": ["local"],
+      "connectivity": ["cloud"],
+      "images": {
+        "large": "./drivers/hmip-remote/assets/images/large.png",
+        "small": "./drivers/hmip-remote/assets/images/small.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ]
+    }
+  ],
+  "flow": {
+    "triggers": [
+      {
+        "id": "device_state_changed",
+        "title": {
+          "de": "Gerätezustand hat sich geändert",
+          "en": "Device state changed"
+        },
+        "tokens": [
+          {
+            "name": "device_id",
+            "type": "string",
+            "title": {
+              "de": "Geräte-ID",
+              "en": "Device ID"
+            }
+          },
+          {
+            "name": "state",
+            "type": "string",
+            "title": {
+              "de": "Zustand",
+              "en": "State"
+            }
+          }
+        ]
+      },
+      {
+        "id": "button_pressed",
+        "title": {
+          "de": "Taste wurde gedrückt",
+          "en": "Button was pressed"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hmip-remote"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "button",
+            "type": "string",
+            "title": {
+              "de": "Taste",
+              "en": "Button"
+            }
+          },
+          {
+            "name": "press_type",
+            "type": "string",
+            "title": {
+              "de": "Drucktyp",
+              "en": "Press Type"
+            }
+          }
+        ]
+      },
+      {
+        "id": "contact_alarm_true",
+        "title": {
+          "de": "Tür/Fenster wurde geöffnet",
+          "en": "Door/Window was opened"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hmip-contact"
+          }
+        ]
+      },
+      {
+        "id": "contact_alarm_false",
+        "title": {
+          "de": "Tür/Fenster wurde geschlossen",
+          "en": "Door/Window was closed"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hmip-contact"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "turn_on_device",
+        "title": {
+          "de": "Gerät einschalten",
+          "en": "Turn on device"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hmip-switch"
+          }
+        ]
+      },
+      {
+        "id": "open_blinds",
+        "title": {
+          "de": "Rollladen öffnen",
+          "en": "Open blinds"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hmip-windowcoverings"
+          }
+        ]
+      },
+      {
+        "id": "close_blinds",
+        "title": {
+          "de": "Rollladen schließen",
+          "en": "Close blinds"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hmip-windowcoverings"
+          }
+        ]
+      },
+      {
+        "id": "stop_blinds",
+        "title": {
+          "de": "Rollladen stoppen",
+          "en": "Stop blinds"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hmip-windowcoverings"
+          }
+        ]
+      },
+      {
+        "id": "set_blinds_position",
+        "title": {
+          "de": "Rollladen-Position setzen",
+          "en": "Set blinds position"
+        },
+        "titleFormatted": {
+          "de": "Position auf [[position]]% setzen",
+          "en": "Set position to [[position]]%"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=hmip-windowcoverings"
+          },
+          {
+            "type": "range",
+            "name": "position",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "title": {
+              "de": "Position",
+              "en": "Position"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+
